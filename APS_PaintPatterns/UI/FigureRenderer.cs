@@ -11,10 +11,16 @@ namespace APS_PaintPatterns
     class FigureRenderer
     {
         private List<Figures.Figure> figures = new List<Figures.Figure>();
+        private Figures.DragableFigure selector;
 
         public FigureRenderer()
         {
 
+        }
+
+        public void InitSelector(Figures.DragableFigure selector)
+        {
+            this.selector = selector;
         }
 
         public void Add(Figures.Figure figure)
@@ -24,6 +30,7 @@ namespace APS_PaintPatterns
 
         public void Draw(Graphics gr)
         {
+            if(selector != null) selector.Draw(gr);
             foreach (Figures.Figure item in figures)
             {
                 item.Draw(gr);

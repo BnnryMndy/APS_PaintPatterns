@@ -65,6 +65,7 @@ namespace APS_PaintPatterns
             this.SelectToolButton.TabIndex = 2;
             this.SelectToolButton.Text = "⇱";
             this.SelectToolButton.UseVisualStyleBackColor = true;
+            this.SelectToolButton.Click += new System.EventHandler(this.SelectToolButton_Click);
             // 
             // Form1
             // 
@@ -79,6 +80,8 @@ namespace APS_PaintPatterns
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
             this.ResumeLayout(false);
 
         }

@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Figures\DragableFigure.cs" />
+    <Compile Include="Figures\MultiSelector.cs" />
+    <Compile Include="Figures\SelectorFigure.cs" />
     <Compile Include="UI\FigureRenderer.cs" />
     <Compile Include="Figures\Ellipse.cs" />
     <Compile Include="Figures\Factory.cs" />

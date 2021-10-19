@@ -19,6 +19,7 @@ namespace APS_PaintPatterns
         public Form1()
         {
             InitializeComponent();
+            toolsManager.InitRenderer(renderer);
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -34,7 +35,7 @@ namespace APS_PaintPatterns
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-            renderer.Add(toolsManager.ToolAction(e.X, e.Y));
+            toolsManager.ToolMouseDownAction(e.X, e.Y);
             Refresh();
         }
 
@@ -46,6 +47,23 @@ namespace APS_PaintPatterns
         private void EllipseToolButton_Click(object sender, EventArgs e)
         {
             toolsManager.ToolSelect("ellipse");
+        }
+
+        private void SelectToolButton_Click(object sender, EventArgs e)
+        {
+            toolsManager.ToolSelect("select");
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            toolsManager.ToolMouseMoveAction(e.X, e.Y);
+            Refresh();
+        }
+
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            toolsManager.ToolMouseUpAction(e.X, e.Y);
+            Refresh();
         }
     }
 }
