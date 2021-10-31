@@ -23,6 +23,11 @@ namespace APS_PaintPatterns.Figures
             return gp.IsVisible(xx, yy);
         }
 
+        public override Figure Copy()
+        {
+            return new Ellipse(x, y, width, height, borderColor, BgColor);
+        }
+
         private Ellipse(int x, int y, int width, int height, Color mainColor, Color bgColor) : base(x, y, width, height, mainColor, bgColor) { }
 
         public class EllipseFactory : Factory

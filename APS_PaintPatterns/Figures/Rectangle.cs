@@ -37,5 +37,10 @@ namespace APS_PaintPatterns.Figures
             gp.AddRectangle(new RectangleF(x, y, width, height));
             return gp.IsVisible(xx, yy);
         }
+
+        public override Figure Copy()
+        {
+            return new Rectangle(x, y, width, height, borderColor, BgColor);
+        }
     }
 }

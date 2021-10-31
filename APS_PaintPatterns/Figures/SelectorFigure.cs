@@ -96,5 +96,12 @@ namespace APS_PaintPatterns.Figures
 
             return false;
         }
+
+        public override Figure Copy()
+        {
+            SelectorFigure copy = new SelectorFigure();
+            copy.SetSource(source.Copy());
+            return copy;
+        }
     }
 }

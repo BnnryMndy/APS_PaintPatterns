@@ -14,8 +14,9 @@ namespace APS_PaintPatterns.UI
         private FigureRenderer figureSource;
         private Dictionary<string, Factory> Tools = new Dictionary<string, Factory>();
 
+        private Group.GroupCreator paste = new Group.GroupCreator();
         private SelectorFigure select = new SelectorFigure();
-        private MultiSelector multiSelector = new MultiSelector();
+        private Group multiSelector = new Group();
         private DragableFigure currentSelector; // TODO: сделать элегантно 
         private bool isDragging = false;
         private bool isSelecting = false;
@@ -26,6 +27,7 @@ namespace APS_PaintPatterns.UI
             Tools.Add("rect", new Figures.Rectangle.RectangleFactory());
             Tools.Add("ellipse", new Ellipse.EllipseFactory());
             Tools.Add("select", null);
+            Tools.Add("paste", paste);
 
             selectedTool = Tools["rect"];
         }
@@ -41,17 +43,16 @@ namespace APS_PaintPatterns.UI
             selectedTool = Tools[toolName];
             if (toolName != "select")
             {
-                select.SetSource(null);
+                //select.SetSource(null);
                 multiSelector.Hide();
             }
         }
 
         public void ToolMouseDownAction(int x, int y)
         {
-            
-            if(selectedTool == null) // выбран select  
+            //if (selectedTool) throw new Exception();
+            if (selectedTool == null) // выбран select  
             {
-                //figureSource.InitSelector(null);
                 bool isAlreadySelected = select.Touch(x, y);
                 if (!isAlreadySelected)
                 {
@@ -59,11 +60,10 @@ namespace APS_PaintPatterns.UI
                     if (figureSource.Select(x, y) != null)
                     {
                         currentSelector = select;
-                        //multiSelector.Hide();
                         figureSource.InitSelector(select);
                     }
                 }
-                else 
+                else
                 {
 
                     isDragging = true;
@@ -72,7 +72,7 @@ namespace APS_PaintPatterns.UI
                     return;
                 }
 
-                if(!multiSelector.Touch(x, y))
+                if (!multiSelector.Touch(x, y))
                 {
                     multiSelector.setStartPosition(x, y);
                     currentSelector = multiSelector;
@@ -89,7 +89,26 @@ namespace APS_PaintPatterns.UI
                 }
 
             }
-                else figureSource.Add(selectedTool.Create(x - 25, y - 25, 50, 50, Color.Black, Color.Transparent)); 
+            else
+            {
+                Figure figure = selectedTool.Create(x - 25, y - 25, 50, 50, Color.Black, Color.Transparent);
+                
+                if (selectedTool == Tools["paste"])
+                {
+                    Group figures = (Group)figure;
+                    foreach (Figure figure1 in figures.SelectedFiguries)
+                    {
+                        figureSource.Add(figure1);
+                    }
+                }
+                else
+                {
+                    figureSource.Add(figure);
+                }
+                
+                
+            }
+                
         }
 
         public void ToolMouseMoveAction(int x, int y)
@@ -104,15 +123,7 @@ namespace APS_PaintPatterns.UI
             {
                 multiSelector.setEndPosition(x, y);
             }
-            //if (currentSelector == multiSelector ) 
-            //{
-            //    if (multiSelector.Touch(x, y))
-            //    {
-            //        multiSelector.Drag(x - startX, y - startY);
-            //        startX = x;
-            //        startY = y;
-            //    }
-            //}
+            
         }
 
         public void ToolMouseUpAction(int x, int y)
@@ -124,6 +135,15 @@ namespace APS_PaintPatterns.UI
                 multiSelector.SelectedFiguries = figureSource.SelectMany(multiSelector.X, multiSelector.Y, multiSelector.Width, multiSelector.Height);
             }
         }
+
+        public void CopySelected()
+        {
+            
+            Tools["paste"] = new Group.GroupCreator(multiSelector);
+            //throw new Exception();
+        }
+
+        //public void Paste(int x, int y)
 
     }
 }

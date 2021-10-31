@@ -65,5 +65,15 @@ namespace APS_PaintPatterns
             toolsManager.ToolMouseUpAction(e.X, e.Y);
             Refresh();
         }
+
+        private void AddGroupButton_Click(object sender, EventArgs e)
+        {
+            toolsManager.CopySelected();
+        }
+
+        private void LoadGroupButton_Click(object sender, EventArgs e)
+        {
+            toolsManager.ToolSelect("paste");
+        }
     }
 }

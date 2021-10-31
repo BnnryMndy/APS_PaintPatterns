@@ -47,5 +47,7 @@ namespace APS_PaintPatterns.Figures
         {
             return false;
         }
+
+        public abstract Figure Copy();
     }
 }

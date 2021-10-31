@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace APS_PaintPatterns.Figures
 {
-    class MultiSelector : DragableFigure
+    class Group : DragableFigure
     {
         private List<Figure> selectedFigures = new List<Figure>();
 
@@ -29,6 +29,34 @@ namespace APS_PaintPatterns.Figures
         int startY; 
         int startWidth;
         int startHeight;
+
+        public class GroupCreator : Factory
+        {
+
+            Group prototype;
+            public GroupCreator(Group template)
+            {
+                prototype = (Group)template.Copy();
+            }
+            public GroupCreator()
+            {
+                prototype = new Group();
+            }
+
+            public override Figure Create(int x, int y, int width, int height, Color borderColor, Color bgColor)
+            {
+                Group template = (Group)prototype.Copy();
+                template.X = x;
+                template.Y = y;
+                template.Drag(prototype.X*(-1) - (prototype.width/2) +(width/2), prototype.Y * (-1) - (prototype.height/2) + (width / 2));
+                template.Drag(0, 0);
+                template.isVisible = false;
+                
+                //if (true) throw new Exception();
+                return template;
+                
+            }
+        }
 
         public List<Figure> SelectedFiguries {
             set
@@ -54,11 +82,12 @@ namespace APS_PaintPatterns.Figures
                 proportionalsX = selectedProportionalsX.ToArray();
                 proportionalsY = selectedProportionalsY.ToArray();
             }
+
+            get { return selectedFigures; }
         }
 
         public bool IsVisible { get { return isVisible; } }
 
-        //TODO: Сделать пропорциональное смещение по X и Y
         public override void Drag(int dX, int dY)
         {
             int i = 0; //Кто же знал, что я докачусь до такого
@@ -87,9 +116,6 @@ namespace APS_PaintPatterns.Figures
 
            
         }
-
-        
-
 
         public void setStartPosition(int x, int y)
         {
@@ -163,12 +189,37 @@ namespace APS_PaintPatterns.Figures
                 gr.DrawRectangle(pen, X + Width, Y - cornersSize, cornersSize, cornersSize); //Второй угол
                 gr.DrawRectangle(pen, X - cornersSize, Y + Height, cornersSize, cornersSize); //Третий угол
                 gr.DrawRectangle(pen, X + Width, Y + Height, cornersSize, cornersSize); //Четвертый угол
+                
+                
+            }
+
+            foreach (Figure selected in selectedFigures)
+            {
+                selected.Draw(gr);
             }
         }
 
         public void Hide()
         {
             isVisible = false;
+        }
+
+        public override Figure Copy()
+        {
+            Group copy = new Group();
+            copy.X = x;
+            copy.Y = y;
+            copy.Width = width;
+            copy.Height = height;
+
+            List<Figure> figures = new List<Figure>();
+            foreach(Figure figure in selectedFigures)
+            {
+                figures.Add(figure.Copy());
+                if (figure == figures.Last()) throw new Exception();
+            }
+            copy.SelectedFiguries = figures;
+            return copy;
         }
     }
 }
