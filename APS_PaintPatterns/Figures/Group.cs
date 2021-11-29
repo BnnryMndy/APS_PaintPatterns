@@ -8,218 +8,134 @@ using System.Threading.Tasks;
 
 namespace APS_PaintPatterns.Figures
 {
-    class Group : DragableFigure
+    class Group : Figure
     {
-        private List<Figure> selectedFigures = new List<Figure>();
-
-        private List<double> selectedProportionalsW = new List<double>();
-        private List<double> selectedProportionalsH = new List<double>();
-        private List<double> selectedProportionalsX = new List<double>();
-        private List<double> selectedProportionalsY = new List<double>();
-
-        private double[] proportionalsW;
-        private double[] proportionalsH;
-        private double[] proportionalsX;
-        private double[] proportionalsY;
-
-        private bool isVisible = false;
-        int corner = -1;
-        int cornersSize = 10;
-        int startX;
-        int startY; 
-        int startWidth;
-        int startHeight;
-
-        public class GroupCreator : Factory
-        {
-
-            Group prototype;
-            public GroupCreator(Group template)
-            {
-                prototype = (Group)template.Copy();
-            }
-            public GroupCreator()
-            {
-                prototype = new Group();
-            }
-
-            public override Figure Create(int x, int y, int width, int height, Color borderColor, Color bgColor)
-            {
-                Group template = (Group)prototype.Copy();
-                template.X = x;
-                template.Y = y;
-                template.Drag(prototype.X*(-1) - (prototype.width/2) +(width/2), prototype.Y * (-1) - (prototype.height/2) + (width / 2));
-                template.Drag(0, 0);
-                template.isVisible = false;
+        List<Figure> groupedFigures = new List<Figure>();
+        //public override int X
+        //{
+        //    get
+        //    {
                 
-                //if (true) throw new Exception();
-                return template;
+        //        return x;
+        //    }
+        //    set
+        //    {
+        //        Drag(value - x, y);
+        //        x = value;
                 
-            }
-        }
+        //    }
+        //}
 
-        public List<Figure> SelectedFiguries {
-            set
-            {
-                selectedFigures.Clear();
-                selectedProportionalsH.Clear();
-                selectedProportionalsW.Clear();
-                selectedProportionalsX.Clear();
-                selectedProportionalsY.Clear();
-                               
-                foreach (Figure newItem in value)
-                {
-                    selectedFigures.Add(newItem);
-                    
-                    selectedProportionalsX.Add((double)(newItem.X - startX) / (double)Width);
-                    selectedProportionalsY.Add((double)(newItem.Y - startY) / (double)Height);
-                    selectedProportionalsH.Add((double)newItem.Height / (double)Height);
-                    selectedProportionalsW.Add((double)newItem.Width / (double)Width);
-                }
+        //public override int Y
+        //{
+        //    get
+        //    { 
+        //       return y;
+        //    }
+        //    set
+        //    {
+        //        Drag(x, value - y);
+        //        y = value;
+        //    }
+        //}
 
-                proportionalsW = selectedProportionalsW.ToArray();
-                proportionalsH = selectedProportionalsH.ToArray();
-                proportionalsX = selectedProportionalsX.ToArray();
-                proportionalsY = selectedProportionalsY.ToArray();
-            }
+        //public override int Width
+        //{
+        //    get
+        //    {
+        //        return width;
+        //    }
+        //    set
+        //    {
+        //        width = value > minSize ? value : minSize;
+        //    }
+        //}
 
-            get { return selectedFigures; }
-        }
+        //public override int Height
+        //{
+        //    get
+        //    {
+        //        return height;
+        //    }
+        //    set
+        //    {
+        //        height = value > minSize ? value : minSize;
+        //    }
+        //}
 
-        public bool IsVisible { get { return isVisible; } }
-
-        public override void Drag(int dX, int dY)
+        //public void 
+        public void addFigure(Figure figure)
         {
-            int i = 0; //Кто же знал, что я докачусь до такого
+            if (groupedFigures.Contains(figure)) return;
             
-            //изменение размеров объекта селектора
-            x = corner < 0 ? x + dX : x + dX * (corner % 2 == 0 ? 0 : 1);
-            y = corner < 0 ? y + dY : y + dY * (corner % 3 == 0 || corner % 4 == 0 ? 0 : 1);
-            width = width < 1? 1 : corner < 0 ? width : width - dX * (corner % 2 == 0 ? - 1 : 1);
-            height = height < 1 ? 1 : corner < 0 ? height : height - dY * (corner % 3 == 0 || corner % 4 == 0 ? -1 : 1);
+            groupedFigures.Add(figure);
+            //if (figure.X < this.X)
+            //    this.x = figure.X;
 
-            //пропорциональное уменьшение 
-            foreach (Figure figure in selectedFigures)
-            {
-                figure.X = (int)(proportionalsX[i] * startWidth + (x));
-                figure.Y = (int)(proportionalsY[i] * startHeight + (y));
-                figure.Width = (int)(startWidth * proportionalsW[i]);
-                figure.Height = (int)(startHeight * proportionalsH[i]);
-                
-                i++;
-            }
+            //if (figure.Y < this.y)
+            //    this.y = figure.Y;
 
-            startX = x;
-            startY = y;
-            startWidth = width;
-            startHeight = height;
+            //if (this.x + this.width < figure.X + figure.Width)
+            //    this.width = this.Width + (figure.X + figure.Width - (this.x + this.width));
 
-           
+            //if (this.y + this.height < figure.Y + figure.Height)
+            //    this.height = this.height + (figure.Y + figure.Height - (this.y + this.height));
         }
 
-        public void setStartPosition(int x, int y)
+
+        //don't work now ()
+        private void ungroupFigure(Figure figure)
         {
-            isVisible = true;
-            this.x = x;
-            this.y = y;
-            startX = x;
-            startY = y;
+            groupedFigures.Remove(figure);
 
-            //сбрасываем размер
-            this.width = 0;
-            this.height = 0;
+            if (figure.X == this.X)
+                this.x = figure.X;
 
-            //сбрасываем выбранные фигуры
-            selectedFigures.Clear();
-        }
+            if (figure.Y == this.y)
+                this.y = figure.Y;
 
-        public void setEndPosition(int x, int y)
-        {
-            //магия, чтобы область выделялась во все стороны (ВРЕМЕННО НЕ РАБОТАЕТ)
-            
-            //this.x = x - this.x > 0 ? this.x : x;
-            //this.y = y - this.y > 0 ? this.y : y;
-            //int secondX = 0;
-            //int secondY = 0;
-            //secondX = x - this.x > 0 ? this.x : secondX;
-            //secondY = y - this.y > 0 ? this.y : secondY;
-            width = x - this.x > 0 ? x - this.x : 1;
-            height = y - this.y > 0 ? y - this.y: 1;
-            startWidth = width;
-            startHeight = height;
-        }
+            if (this.x + this.width == figure.X + figure.Width)
+                this.width = this.Width + (figure.X + figure.Width - (this.x + this.width));
 
-        public override bool Touch(int x, int y)
-        {
-            if (isVisible)
-            {
-                GraphicsPath gp = new GraphicsPath();
-                gp.AddRectangle(new RectangleF(X, Y, Width, Height));
-                if (gp.IsVisible(x, y)) { corner = -1; return true; }
-
-                gp.ClearMarkers();
-                gp.AddRectangle(new RectangleF(X - cornersSize, Y - cornersSize, cornersSize, cornersSize));
-                if (gp.IsVisible(x, y)) { corner = 1; return true; }
-
-                gp.ClearMarkers();
-                gp.AddRectangle(new RectangleF(X + Width, Y - cornersSize, cornersSize, cornersSize));
-                if (gp.IsVisible(x, y)) { corner = 2; return true; }
-
-                gp.ClearMarkers();
-                gp.AddRectangle(new RectangleF(X - cornersSize, Y + Height, cornersSize, cornersSize));
-                if (gp.IsVisible(x, y)) { corner = 3; return true; }
-
-                gp.ClearMarkers();
-                gp.AddRectangle(new RectangleF(X + Width, Y + Height, cornersSize, cornersSize));
-                if (gp.IsVisible(x, y)) { corner = 4; return true; }
-
-            }
-            return false;
-        }
-
-        public override void Draw(Graphics gr)
-        {
-            if (isVisible)
-            {
-                Pen pen = new Pen(Color.Black);
-                Pen penDash = new Pen(Color.Black, 1);
-                penDash.DashStyle = DashStyle.Dash;
-                gr.DrawRectangle(penDash, X, Y, Width, Height);
-                gr.DrawRectangle(pen, X - cornersSize, Y - cornersSize, cornersSize, cornersSize); //Первый угол
-                gr.DrawRectangle(pen, X + Width, Y - cornersSize, cornersSize, cornersSize); //Второй угол
-                gr.DrawRectangle(pen, X - cornersSize, Y + Height, cornersSize, cornersSize); //Третий угол
-                gr.DrawRectangle(pen, X + Width, Y + Height, cornersSize, cornersSize); //Четвертый угол
-                
-                
-            }
-
-            foreach (Figure selected in selectedFigures)
-            {
-                selected.Draw(gr);
-            }
-        }
-
-        public void Hide()
-        {
-            isVisible = false;
+            if (this.y + this.height == figure.Y + figure.Height)
+                this.height = this.height + (figure.Y + figure.Height - (this.y + this.height));
         }
 
         public override Figure Copy()
         {
-            Group copy = new Group();
-            copy.X = x;
-            copy.Y = y;
-            copy.Width = width;
-            copy.Height = height;
-
-            List<Figure> figures = new List<Figure>();
-            foreach(Figure figure in selectedFigures)
+            Group copy = new Group(); //x, y, width, height, borderColor, bgColor
+            foreach (Figure item in groupedFigures)
             {
-                figures.Add(figure.Copy());
-                if (figure == figures.Last()) throw new Exception();
+                copy.addFigure(item.Copy());
             }
-            copy.SelectedFiguries = figures;
             return copy;
         }
+
+        public override bool Touch(int xx, int yy)
+        {
+            GraphicsPath gp = new GraphicsPath();
+            gp.AddRectangle(new RectangleF(x, y, width, height));
+            return gp.IsVisible(xx, yy);
+        }
+
+        public override void Draw(Graphics gr)
+        {
+            foreach (Figure item in groupedFigures)
+            {
+                item.Draw(gr);
+            }
+        }
+
+        public void Drag(int dx, int dy)
+        {
+            if (groupedFigures.Count < 1) return;
+            foreach (Figure item in groupedFigures)
+            {
+                item.X += dx;
+                item.Y += dy;
+            }
+        }
+
+
     }
 }

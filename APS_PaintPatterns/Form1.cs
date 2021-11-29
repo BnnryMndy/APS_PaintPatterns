@@ -73,7 +73,7 @@ namespace APS_PaintPatterns
 
         private void LoadGroupButton_Click(object sender, EventArgs e)
         {
-            toolsManager.ToolSelect("paste");
+            //toolsManager.ToolSelect("paste");
         }
     }
 }

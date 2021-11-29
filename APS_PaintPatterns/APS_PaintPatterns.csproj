@@ -46,8 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Figures\Corners\Corner.cs" />
     <Compile Include="Figures\DragableFigure.cs" />
     <Compile Include="Figures\Group.cs" />
+    <Compile Include="Figures\Corners\ICorner.cs" />
+    <Compile Include="Figures\OldGroup.cs" />
     <Compile Include="Figures\SelectorFigure.cs" />
     <Compile Include="UI\FigureRenderer.cs" />
     <Compile Include="Figures\Ellipse.cs" />

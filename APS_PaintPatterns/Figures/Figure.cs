@@ -14,12 +14,12 @@ namespace APS_PaintPatterns.Figures
         protected int x, y;
         protected int width, height;
         protected Color borderColor, bgColor;
-        public int X { get { return x; } set { x = value; } }
-        public int Y { get { return y; } set { y = value; } }
-        public int Width { get { return width; } set { width = value > minSize ? value : minSize; } }
-        public int Height { get { return height; } set { height = value > minSize? value : minSize; } }
-        public Color BorderColor { get { return borderColor; } set { borderColor = value; } }
-        public Color BgColor { get { return bgColor; } set { bgColor = value; } }
+        public virtual int X { get { return x; } set { x = value; } }
+        public virtual int Y { get { return y; } set { y = value; } }
+        public virtual int Width { get { return width; } set { width = value > minSize ? value : minSize; } }
+        public virtual int Height { get { return height; } set { height = value > minSize? value : minSize; } }
+        public  Color BorderColor { get { return borderColor; } set { borderColor = value; } }
+        public  Color BgColor { get { return bgColor; } set { bgColor = value; } }
 
         public abstract void Draw(Graphics gr);
 

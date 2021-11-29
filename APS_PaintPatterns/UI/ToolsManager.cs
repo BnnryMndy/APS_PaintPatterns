@@ -14,10 +14,9 @@ namespace APS_PaintPatterns.UI
         private FigureRenderer figureSource;
         private Dictionary<string, Factory> Tools = new Dictionary<string, Factory>();
 
-        private Group.GroupCreator paste = new Group.GroupCreator();
+        private OldGroup.GroupCreator paste = new OldGroup.GroupCreator();
         private SelectorFigure select = new SelectorFigure();
-        private Group multiSelector = new Group();
-        private DragableFigure currentSelector; // TODO: сделать элегантно 
+        private OldGroup multiSelector = new OldGroup();
         private bool isDragging = false;
         private bool isSelecting = false;
         private int startX, startY;
@@ -35,7 +34,7 @@ namespace APS_PaintPatterns.UI
         public void InitRenderer(FigureRenderer renderer)
         {
             figureSource = renderer;
-            renderer.InitSelector(currentSelector);
+            renderer.InitSelector(select);
         }
 
         public void ToolSelect(string toolName)
@@ -43,45 +42,29 @@ namespace APS_PaintPatterns.UI
             selectedTool = Tools[toolName];
             if (toolName != "select")
             {
-                //select.SetSource(null);
                 multiSelector.Hide();
             }
         }
 
         public void ToolMouseDownAction(int x, int y)
         {
-            //if (selectedTool) throw new Exception();
+           
             if (selectedTool == null) // выбран select  
             {
-                bool isAlreadySelected = select.Touch(x, y);
-                if (!isAlreadySelected)
+                if (!select.Touch(x, y))
                 {
-                    select.SetSource(figureSource.Select(x, y));
-                    if (figureSource.Select(x, y) != null)
-                    {
-                        currentSelector = select;
-                        figureSource.InitSelector(select);
-                    }
-                }
-                else
-                {
-
-                    isDragging = true;
+                    isDragging = false;
+                    isSelecting = true;
+                    select.isVisible = true;
+                    select.X = x;
+                    select.Y = y;
                     startX = x;
                     startY = y;
-                    return;
-                }
 
-                if (!multiSelector.Touch(x, y))
-                {
-                    multiSelector.setStartPosition(x, y);
-                    currentSelector = multiSelector;
-                    figureSource.InitSelector(multiSelector);
-                    isSelecting = true;
-                    return;
                 }
                 else
                 {
+                    isSelecting = false;
                     isDragging = true;
                     startX = x;
                     startY = y;
@@ -92,21 +75,7 @@ namespace APS_PaintPatterns.UI
             else
             {
                 Figure figure = selectedTool.Create(x - 25, y - 25, 50, 50, Color.Black, Color.Transparent);
-                
-                if (selectedTool == Tools["paste"])
-                {
-                    Group figures = (Group)figure;
-                    foreach (Figure figure1 in figures.SelectedFiguries)
-                    {
-                        figureSource.Add(figure1);
-                    }
-                }
-                else
-                {
-                    figureSource.Add(figure);
-                }
-                
-                
+                figureSource.Add(figure);
             }
                 
         }
@@ -115,35 +84,42 @@ namespace APS_PaintPatterns.UI
         {
             if (isDragging)
             {
-                currentSelector.Drag(x - startX, y - startY);
+                select.Drag(x - startX, y - startY);
                 startX = x;
                 startY = y;
             }
-            if (currentSelector == multiSelector && isSelecting)
+            else if (isSelecting)
             {
-                multiSelector.setEndPosition(x, y);
+                select.Width = x - startX;
+                select.Height = y - startY;
             }
+            
             
         }
 
         public void ToolMouseUpAction(int x, int y)
         {
-            isDragging = false;
-            if(multiSelector == currentSelector && isSelecting)
+            select.SetSource(figureSource.Select(startX, startY, x - startX, y - startY));
+            if (figureSource.Select(startX, startY, x - startX, y - startY) != null)
             {
-                isSelecting = false;
-                multiSelector.SelectedFiguries = figureSource.SelectMany(multiSelector.X, multiSelector.Y, multiSelector.Width, multiSelector.Height);
+                figureSource.InitSelector(select);
             }
+            else
+            {
+                select.SetSource(null);
+                select.isVisible = false;
+            }
+            startX = x;
+            startY = y;
         }
 
         public void CopySelected()
         {
             
-            Tools["paste"] = new Group.GroupCreator(multiSelector);
+            Tools["paste"] = new OldGroup.GroupCreator(multiSelector);
             //throw new Exception();
         }
 
-        //public void Paste(int x, int y)
 
     }
 }

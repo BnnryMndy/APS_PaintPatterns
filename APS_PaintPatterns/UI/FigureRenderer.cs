@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using APS_PaintPatterns.Figures;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,20 +11,20 @@ namespace APS_PaintPatterns
 {
     class FigureRenderer
     {
-        private List<Figures.Figure> figures = new List<Figures.Figure>();
-        private Figures.DragableFigure selector;
+        private List<Figure> figures = new List<Figure>();
+        private Figure selector;
 
         public FigureRenderer()
         {
 
         }
 
-        public void InitSelector(Figures.DragableFigure selector)
+        public void InitSelector(Figure selector)
         {
             this.selector = selector;
         }
 
-        public void Add(Figures.Figure figure)
+        public void Add(Figure figure)
         {
             if (figure != null) figures.Add(figure);
         }
@@ -31,26 +32,49 @@ namespace APS_PaintPatterns
         public void Draw(Graphics gr)
         {
             if(selector != null) selector.Draw(gr);
-            foreach (Figures.Figure item in figures)
+            foreach (Figure item in figures)
             {
                 item.Draw(gr);
             }
         }
 
-        public Figures.Figure Select(int x, int y)
+        public Figure Select(int x, int y)
         {
-            foreach (Figures.Figure item in figures)
+            foreach (Figure item in figures)
             {
                 if (item.Touch(x, y)) return item;
             }
             return null;
         }
-
-        public List<Figures.Figure> SelectMany(int x, int y, int width, int height)
+        public Figure Select(int x, int y, int width, int height)
         {
-            List<Figures.Figure> selectedFigures = new List<Figures.Figure>();
+            Group group = new Group();
+            group.X = x;
+            group.Y = y;
+            group.Width = width;
+            group.Height = height;
+            List<Figure> selectedFigures = new List<Figure>();
 
-            foreach (Figures.Figure item in figures)
+            foreach (Figure item in figures)
+            {
+                if (item.X > x && item.X + item.Width < x + width &&
+                    item.Y > y && item.Y + item.Height < y + height) // Проверяем, что выделяется хотя бы часть фигуры
+                {
+                    selectedFigures.Add(item);
+                    group.addFigure(item);
+                }
+            }
+            if (selectedFigures.Count < 1) return null;
+            if (selectedFigures.Count == 1) return selectedFigures.First();
+
+            return group;
+        }
+
+        public List<Figure> SelectMany(int x, int y, int width, int height)
+        {
+            List<Figure> selectedFigures = new List<Figures.Figure>();
+
+            foreach (Figure item in figures)
             {
                 if(item.X > x && item.X + item.Width < x + width &&
                     item.Y > y && item.Y + item.Height < y + height) // Проверяем, что выделяется вся фигура
